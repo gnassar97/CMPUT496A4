@@ -439,7 +439,7 @@ class SimpleGoBoard(object):
             return winner, move
 
     def check_pattern(self,point,have,direction_x,direction_y,moveSet,patternList,color,flag):
-        for i in range(0,4):
+        for i in range(0,5):
             if have in patternList[i]:
                 for dis in patternList[i][have]:
                     moveSet[i].add(point-direction_x*(dis+1)-direction_y*self.NS*(dis+1))
@@ -468,15 +468,17 @@ class SimpleGoBoard(object):
         2. urgent blocking point xoooo.
         3. wining in 2 step point
         """
-        moveSet=[set(),set(),set(),set()]
+        moveSet=[set(),set(),set(),set(),set(),set()]
         color=self.current_player
 
         patternList=[{'xxxx.':{0},'xxx.x':{1},'xx.xx':{2},'x.xxx':{3},'.xxxx':{4}}, #win
                      {'oooo.':{0},'ooo.o':{1},'oo.oo':{2},'o.ooo':{3},'.oooo':{4}}, #block win
                      {'.xxx..':{1},'..xxx.':{4},'.xx.x.':{2},'.x.xx.':{3}}, #make-four
                      {'.ooo..':{1,5},'..ooo.':{0,4},'.oo.o.':{0,2,5},'.o.oo.':{0,3,5}, 'B.ooo..':{0}, '..ooo.B':{6},
-                     'x.ooo..':{0}, '..ooo.x':{6} #block-open-four
-                     }]
+                     'x.ooo..':{0}, '..ooo.x':{6}},#block-open-four
+                     {'xx...':{2},'.xx..':{1,4},'..xx.':{0,3},'...xx':{2},'x.x..':{3},'.x.x.':{2},'..x.x':{1},#Make 2&3.
+                     'x....':{3}, '.x...':{2,4},'..x..':{1,3},'...x.':{0,2},'....x':{1}}
+                     ]
 
         direction_x=[1,0,1,-1]
         direction_y=[0,1,1,1]
@@ -489,10 +491,12 @@ class SimpleGoBoard(object):
                     self.check_pattern(point,'',direction_x[direction],direction_y[direction],moveSet,patternList,color,flag)
         
         i=0
-        while i<4 and not bool(moveSet[i]): i+=1
-        if i==4:
+        while i<6 and not bool(moveSet[i]): i+=1
+        if i==6:
+            print("Found none")
             return None
         else:
+            print(i, moveSet[i] )
             return i, list(moveSet[i])
             
     def list_solve_point(self):
@@ -501,10 +505,15 @@ class SimpleGoBoard(object):
         2. urgent blocking point xoooo.
         3. wining in 2 step point
         """
-        moveSet=[set(),set(),set(),set()]
+        moveSet=[set(),set(),set(),set(),set(),set()]
         color=self.current_player
 
-        patternList=[{'xxxx.':{0},'xxx.x':{1},'xx.xx':{2},'x.xxx':{3},'.xxxx':{4}},{'oooo.':{0},'ooo.o':{1},'oo.oo':{2},'o.ooo':{3},'.oooo':{4}},{'.xxx..':{1},'..xxx.':{4},'.xx.x.':{2},'.x.xx.':{3}},{'.ooo..':{1,5},'..ooo.':{0,4},'.oo.o.':{2},'.o.oo.':{3}}]
+        patternList=[{'xxxx.':{0},'xxx.x':{1},'xx.xx':{2},'x.xxx':{3},'.xxxx':{4}},
+        {'oooo.':{0},'ooo.o':{1},'oo.oo':{2},'o.ooo':{3},'.oooo':{4}},
+        {'.xxx..':{1},'..xxx.':{4},'.xx.x.':{2},'.x.xx.':{3}},
+        {'.ooo..':{1,5},'..ooo.':{0,4},'.oo.o.':{2},'.o.oo.':{3}}, 
+        {'xx...':{2},'.xx..':{1,4},'..xx.':{0,3},'...xx':{2},'x.x..':{3},'.x.x.':{2},'..x.x':{1},#Make 3.
+                     'x....':{3}, '.x...':{2,4},'..x..':{1,3},'...x.':{0,2},'....x':{1}}]
 
         direction_x=[1,0,1,-1]
         direction_y=[0,1,1,1]
@@ -517,9 +526,9 @@ class SimpleGoBoard(object):
                     self.check_pattern(point,'',direction_x[direction],direction_y[direction],moveSet,patternList,color,flag)
         
         i=0
-        while i<4 and not bool(moveSet[i]):
+        while i<6 and not bool(moveSet[i]):
             i+=1
-        if i==4:
+        if i==6:
             return None
         else:
             return list(moveSet[i])
